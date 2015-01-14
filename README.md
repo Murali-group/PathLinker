@@ -68,7 +68,7 @@ method.
 
 Run any of the programs with the --help option for full documentation.
 The /example directory contains a sample usage of these programs.
-For all input files in this codebase, lines beginning with a hash (#)
+For all input files, lines beginning with a hash (#)
     are considered to be comments and ignored.
 
 ### Dependencies 
