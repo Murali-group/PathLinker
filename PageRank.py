@@ -1,5 +1,5 @@
 '''
-An implementation of the standard pagerank algorithm, using convergence.
+An implementation of the standard pagerank algorithm, using iterative convergence.
 
 Citation for this work:
     Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. 
@@ -121,7 +121,7 @@ def pagerank(net, weights={}, q=0.5, eps=0.01, maxIters=500, verbose=False, weig
         # teleport with uniform probability to any node. Here we compute
         # the probability that a walker will teleport to each node by
         # this process.
-        zSum = sum([prevVisitProb[x]for x in zeroDegNodes]) / N
+        zSum = sum([prevVisitProb[x] for x in zeroDegNodes]) / N
 
         # Calculate a new visitation probability for each node
         for v in net.nodes_iter():
@@ -210,6 +210,10 @@ REQUIRED arguments:
     group.add_option('', '--max-iters', action='store', type='int', default=500,\
         help='Maximum number of iterations to run the PageRank algorithm. (default=500)')
 
+    parser.add_option('', '--tele-weights', type='string', default=None, metavar='STR',\
+        help='Incoming teleportation weights for each node, in a tab-separated file ' + \
+        'with the form "nodename[tab]weight". If not given, uniform weights are used.')
+    
     parser.add_option_group(group)
 
     # Parse the command line arguments
@@ -233,9 +237,7 @@ REQUIRED arguments:
         items = [x.strip() for x in line.rstrip().split('\t')]
 
         # Skip empty lines or those beginning with '#' comments
-        if line=='':
-            continue
-        if line[0]=='#':
+        if (line == '') or (line[0] =='#'):
             continue
 
         id1 = items[0]
@@ -248,13 +250,37 @@ REQUIRED arguments:
 
         net.add_edge(id1, id2, weight=eWeight)
 
+
+    ## Read teleportation weights if given
+    teleProbs = {} # Node --> weight
+    if opts.tele_weights != None:
+        
+        print('\nReading incoming teleportation probabilities from %s' %(opts.tele_weights))
+        infile = open(opts.tele_weights, 'r')
+        
+        for line in infile:
+            items = [x.strip() for x in line.rstrip().split('\t')]
+
+            # Skip empty lines or those beginning with '#' comments
+            if (line == '') or (line[0] =='#'):
+                continue
+
+            node = items[0]
+            weight = float(items[1])
+
+            if not node in net:
+                print("Error: Node %s from teleportation probability file is not in graph."%(node))
+                exit(-2)
+
+            teleProbs[node] = weight
+    
     ## Run PageRank
-    finalProbs = pagerank(net,
+    finalProbs = pagerank(net, weights=teleProbs,
             q=opts.q_param, eps=opts.epsilon, maxIters=opts.max_iters, verbose=opts.verbose)
 
 
     ## Print the result
-    print("Writing results to " + opts.output)
+    print("\nWriting results to " + opts.output)
     writePageRankWeights(finalProbs, filename=opts.output)
 
 

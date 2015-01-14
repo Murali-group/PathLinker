@@ -56,6 +56,15 @@ To compute a PageRank on the network, use the command:
 This will output a file, `pageranks.txt`, which contains a visitation
 probability for every node on the network.
 
+To use a teleportation weight file, use the command:
+
+    python ../PageRank.py sample-in-net.txt --tele-weights sample-in-teleprobs.txt
+
+This will output a new `pageranks.txt` for the modified system. Note
+that the weights in this input file do not necessarily need to be
+normalized, they will be normalized internally. Any nodes omitted from
+this file are assumed to have weight 0.
+
 Additional arguments to the program can adjust the algorithm parameters,
 as described in the reference materials.
 
