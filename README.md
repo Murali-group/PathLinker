@@ -3,6 +3,8 @@
 This software implementats the PathLinker algorithm for reconstructing
 signaling pathways from protein interaction networks.
 
+![An image of a signaling pathway](pathway.jpg)
+
 ### Authors
   * Christopher L. Poirel (chris.poirel@gmail.com)
   * Anna Ritz (annaritz@vt.edu)
