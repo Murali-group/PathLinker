@@ -45,7 +45,7 @@ PathLinker uses two primary steps to produce this ranking:
   receptor to any transcription factor. This step uses a novel
   modification of Yen's algorithm which allows fast computation for very
   large *k* values, e.g., 10,000. PathLinker ranks each interaction in
-  the network by the index of the first path in which ut appears.
+  the network by the index of the first path in which it appears.
 
 See the publications referenced above for a formal description of the
 method.
