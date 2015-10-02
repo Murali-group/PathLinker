@@ -1,10 +1,10 @@
 # A simple demo of this codebase
 
 This directory contains a small example graph, used to demonstrate the
-functionality of this code. There are two input files:
+functionality of this code. There are two primary input files:
 
   * **sample-in-net.txt** This file contains a description the directed
-  graph as a list of edges.
+  graph as a list of weighted edges.
   * **sample-in-nodetypes.txt** This file contains node type information
   to indicate which nodes are sources and which are targets in the
   network.
@@ -19,9 +19,10 @@ nodetypes.txt file.
 
 The sample data describes a network with two receptors and three
 transcription factors, in addition to 6 other proteins. There are a
-total of 20 given interactions in this network. PathLinker will provide
-a ranking for these interactions by how likely that are to appear on a
-signaling pathway between the receptors and transcription factors.
+total of 20 given interactions in this network. All interactions have an
+arbitrary probability weight of 0.5. PathLinker will provide a ranking
+for these interactions by how likely that are to appear on a signaling 
+pathway between the receptors and transcription factors.
 
 To run PathLinker on this network, use the command:
 (assuming the example directory is the working directory)
@@ -39,7 +40,7 @@ determine the ranking. Additional options control the parameters for
 PathLinker, as described in the reference materials.
 
 Two sample output files are provided for comparison:
-"sample-out-ranked-edges.txt" and `sample-out-paths.txt`. Note that
+`sample-out-ranked-edges.txt` and `sample-out-paths.txt`. Note that
 these files may not exactly match your outputs, because paths of
 equal length may be returned and processed in a different order
 according to your version of Python and NetworkX. However, recall that
@@ -47,9 +48,21 @@ PathLinker defines an equal ranking in this case; the results
 should be interpreted as equivalent, although the output is not
 textually identical.
 
+### Running PathLinker with PageRank
+
+Suppose you wanted to run PathLinker on that same network, but did not have
+edge weights. PathLinker can first run PageRank to generate edge weights.
+The file `sample-in-net-noweights.txt` is identical to the first network,
+but lacks weights.
+
+To run PathLinker with PageRank on this network, use the command:
+(assuming the example directory is the working directory)
+
+    python ../PathLinker.py --PageRank sample-in-net-noweights.txt sample-in-nodetypes.txt
+
 ### Running PageRank
 
-To compute a PageRank on the network, use the command:
+To only compute a PageRank on the network, use the command:
 
     python ../PageRank.py sample-in-net.txt
 
