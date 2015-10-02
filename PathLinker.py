@@ -29,23 +29,29 @@ import networkx as nx
 # local modules
 import ksp_Astar as ksp
 from PageRank import pagerank
+from PageRank import writePageRankWeights
 
-# Prepare the network for the KSP algorithm by: 
-#   - Modifying the weights along the edges according to the pagerank probability flux
-#   - Removing outgoing edges from the TRs and incoming edges to the receptors. 
-#   - Creating a 'supersource' node with edges to each of the receptors
-#   - Creating a 'supersink' node with edges from each of the TRs
-#
-# The weights to be used for KSP will be stored in the 'ksp_weight' attribute of the 
-# Networkx graph.
-def prepareNetForKSP(net, sources, targets, nodeWeights):
+# Modifies the structure of the graph by removing all edges entering
+# sources. These edges will never contribute to a
+# path, according to the PathLinker formulation.
+def modifyGraphForKSP_removeEdgesToSources(net, sources):
 
-    # the flux score for and edge (u,v) is f_uv = (w_uv p_u)/d_u where
-    # w_uv is the weight of the edge (u,v), p_u is the normalized visitation
-    # probability (or node score) for u, and d_u is the weighted outdegree of node u.
-    currWeight = {}
+    # We will never use edges leaving a target or entering a source, since
+    # we do not allow start/end nodes to be internal to any path.
+    for u,v in net.edges():
+        if not net.has_edge(u, v):
+            continue
+        # remove edges coming into sources
+        elif v in sources:
+            net.remove_edge(u,v)
+    return
 
-    # we will never use edges leaving a target or entering a source, since
+# Modifies the structure of the graph by removing all edges 
+# exiting targets. These edges will never contribute to a
+# path, according to the PathLinker formulation.
+def modifyGraphForKSP_removeEdgesFromTargets(net, targets):
+
+    # We will never use edges leaving a target or entering a source, since
     # we do not allow start/end nodes to be internal to any path.
     for u,v in net.edges():
         if not net.has_edge(u, v):
@@ -53,43 +59,76 @@ def prepareNetForKSP(net, sources, targets, nodeWeights):
         # remove edges leaving targets
         elif u in targets:
             net.remove_edge(u,v)
-        # remove edges coming into sources
-        elif v in sources:
-            net.remove_edge(u,v)
+    return
 
-    # assign EdgeFlux scores to the edges
-    sumWeight = 0
-    for u,v in net.edges():
-        currWeight[(u,v)] = nodeWeights[u] * net[u][v]['weight']/net.out_degree(u, 'weight')
-        sumWeight += currWeight[(u,v)] # Normalize to account for probability lost from removed edges
+# Modifies the structure of the graph by adding a supersource with an
+# edge to every source, and a supersink with an edge from every target.
+# These artificial edges are given weight 'weightForArtificialEdges',
+# which should correspond to a "free" edge in the current interpretation
+# of the graph.
+def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtificialEdges=0):
 
-    for u,v in net.edges():
-        w = -log(max([0.000000001, currWeight[(u,v)] / sumWeight]))/log(10)
-        net.edge[u][v]['ksp_weight'] = w
-
-    # add supersource and supersink. shortest paths from source to sink are the same
+    # Add a supersource and supersink. Shortest paths from source to sink are the same
     # as shortest paths from "sources" to "targets".
     for s in sources:
         net.add_edge('source', s, weight=1)
-        net.edge['source'][s]['ksp_weight'] = 0
+        net.edge['source'][s]['ksp_weight'] = weightForArtificialEdges
     for t in targets:
         net.add_edge(t, 'sink', weight=1)
-        net.edge[t]['sink']['ksp_weight'] = 0
+        net.edge[t]['sink']['ksp_weight'] = weightForArtificialEdges
+
     return
 
+# Apply a negative logarithmic transformation to edge weights,
+# converting multiplicative values (where higher is better) to additive
+# costs (where lower is better).
+#
+# Before the transformation, weights are normalized to sum to one,
+# supporting an interpretation as probabilities.
+#
+# If the weights in the input graph correspond to probabilities,
+# shortest paths in the output graph are maximum-probability paths in
+# the input graph.
+def logTransformEdgeWeights(net):
+   
+    # In the "standard" PathLinker case, this is necessary to account
+    # for the probability that is lost when edges are removed in
+    # modifyGraphForKSP_removeEdges(), along with probability lost to
+    # zero degree nodes in the edge flux calculation.
+    sumWeight = 0
+    for u,v in net.edges():
+        sumWeight += net.edge[u][v]['ksp_weight']
+    
+    for u,v in net.edges():
+        w = -log(max([0.000000001, net.edge[u][v]['ksp_weight'] / sumWeight]))/log(10)
+        net.edge[u][v]['ksp_weight'] = w
+
+# Given a probability distribution over the nodes, calculate the
+# probability "flowing" though the outgoing edges of every node. Used
+# to assign edge weights after PageRank-ing nodes.
+def calculateFluxEdgeWeights(net, nodeWeights):
+    
+    # the flux score for and edge (u,v) is f_uv = (w_uv p_u)/d_u where
+    # w_uv is the weight of the edge (u,v), p_u is the normalized visitation
+    # probability (or node score) for u, and d_u is the weighted outdegree of node u.
+
+    # assign EdgeFlux scores to the edges
+    for u,v in net.edges():
+        w = nodeWeights[u] * net[u][v]['weight']/net.out_degree(u, 'weight')
+        net.edge[u][v]['ksp_weight'] = w
 
 
-# Print the edges in the k shortest paths graph computed by Linker.
+# Print the edges in the k shortest paths graph computed by PathLinker.
 # This creates a tab-delimited file with one edge per line with three columns:
-# tail, head, ksp
-# Here, ksp indicates the first shortest path in which the edge is used.
+# tail, head, and KSP index.
+# Here, 'ksp index' indicates the index of the first shortest path in which the edge is used.
 def printKSPGraph(f, graph):
 
     outf = open(f, 'w')
-    outf.write('#tail\thead\tksp\n')
+    outf.write('#tail\thead\tKSP index\n')
     edges = graph.edges(data=True)
 
-    # Print in increasing order of ksp identifier.
+    # Print in increasing order of KSP identifier.
     for e in sorted(edges, key=lambda x: x[2]['ksp_id']):
         t, h, attr_dict = e
         ksp = attr_dict['ksp_id']
@@ -105,7 +144,7 @@ def printKSPGraph(f, graph):
 def printKSPPaths(f, paths):
 
     outf = open(f, 'w')
-    outf.write('#ksp\tpath_length\tpath\n')
+    outf.write('#KSP\tpath_length\tpath\n')
 
     for k,path in enumerate(paths, 1):
         pathNodes = [n for n,w in path]
@@ -114,23 +153,40 @@ def printKSPPaths(f, paths):
     outf.close()
     return
 
+# Print the edges with the flux weight.
+# Sort by decreasing of flux weight.
+def printEdgeFluxes(f, graph):
+
+    outf = open(f, 'w')
+    outf.write('#tail\thead\tedge_flux\n')
+    edges = graph.edges(data=True)
+
+    # Print in decreasing  flux weight
+    for e in sorted(edges, key=lambda x: x[2]['ksp_weight'], reverse=True):
+        t, h, attr_dict = e
+        w = attr_dict['ksp_weight']
+        outf.write('%s\t%s\t%0.5e\n' %(t, h, w))
+    outf.close()
+    return
 
 def main(args):
     usage = '''
 PathLinker.py [options] NETWORK NODE_TYPES
 REQUIRED arguments:
-    NETWORK - A tab-delimited file with one directed interaction per line. Each
-        line should have at least 2 columns: tail, head. Edges are directed from
-        tail->head. This file can optionally have a third column specifying the
-        edge weight
+    NETWORK - A tab-delimited file with one directed interaction per
+        line. Each line should have at least 2 columns: tail, head. Edges
+        are directed from tail to head. This file can have a third column
+        specifying the edge weight, which is required unless the --PageRank
+        option is used (see --PageRank help for a note on these weights).
+        To run PathLinker on an unweighted graph, set all edge weights
+        to 1 in the input network.
 
     NODE_TYPES - A tab-delimited file denoting nodes as receptors or TRs. The first
         column is the node name, the second is the node type, either 'source'
         (or 'receptor') or 'target' (or 'tr' or 'tf'). Nodes which are neither receptors nor TRs may
         be omitted from this file or may be given a type which is neither 'source'
         nor 'target'.
-
-NOTE: This operates on only the largest (weakly) connected component of the input graph.
+    
 '''
     parser = OptionParser(usage=usage)
 
@@ -139,16 +195,25 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
         help='A string to prepend to all output files. (default="out")')
 
     parser.add_option('', '--write-paths', action='store_true', default=False,\
-        help='If given, also output a list of paths found by ksp in addition to the ranked edges.')
+        help='If given, also output a list of paths found by KSP in addition to the ranked edges.')
+    
+    parser.add_option('', '--no-log-transform', action='store_true', default=False,\
+        help='Normally input edge weights are log-transformed. This option disables that step.')
+
+    parser.add_option('', '--largest-connected-component', action='store_true', default=False,\
+        help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
 
     # Random Walk Group
     group = OptionGroup(parser, 'Random Walk Options')
 
+    group.add_option('', '--PageRank', action='store_true', default=False,\
+        help='Run the PageRank algorithm to generate edge visitation flux values, which are then used as weights for KSP. A weight column in the network file is not needed if this option is given, as the PageRank visitation fluxes are used for edge weights in KSP. If a weight column is given, these weights are interpreted as a weighted PageRank graph.')
+
     group.add_option('-q', '--q-param', action='store', type='float', default=0.5,\
         help='The value of q indicates the probability that the random walker teleports back to a source node during the random walk process. (default=0.5)')
 
-    group.add_option('-e', '--epsilon', action='store', type='float', default=0.01,\
-        help='A small value used to test for convergence of the iterative implementation of PageRank. (default=0.01)')
+    group.add_option('-e', '--epsilon', action='store', type='float', default=0.0001,\
+            help='A small value used to test for convergence of the iterative implementation of PageRank. (default=0.0001)')
 
     group.add_option('', '--max-iters', action='store', type='int', default=500,\
         help='Maximum number of iterations to run the PageRank algorithm. (default=500)')
@@ -161,6 +226,12 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
     group.add_option('-k', '--k-param', type='int', default=100,\
         help='The number of shortest paths to find. (default=100)')
 
+    group.add_option('','--allow-mult-targets', action='store_true', default=False,\
+                     help='By default, PathLinker will remove outgoing edges from targets to ensure that there is only one target on each path.  If --allow-mult-targets is specified, these edges are not removed.')
+
+    group.add_option('','--allow-mult-sources', action='store_true', default=False,\
+                     help='By default, PathLinker will remove incoming edges to sources to ensure that there is only one source on each path.  If --allow-mult-sources is specified, these edges are not removed.')
+
     parser.add_option_group(group)
 
 
@@ -172,8 +243,13 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
     if len(args)!=num_req_args:
         parser.print_help()
         sys.exit('\nERROR: PathLinker.py requires %d positional arguments, %d given.' %(num_req_args, len(args)))
+    
     NETWORK_FILE = args[0]
     NODE_VALUES_FILE = args[1]
+
+    # Validate options
+    if(opts.PageRank and opts.no_log_transform):
+        sys.exit('\nERROR: Options --PageRank and --no-log-transform should not be used together. PageRank weights are probabilities, and must be log-transformed to have an additive interpretation.')
 
     ## Read the network from file
     net = nx.DiGraph()
@@ -197,33 +273,44 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
         if id1==id2:
             continue
 
-        # If no weight is given for the edge, assign it a weight of 1.
+        # Possibly use an edge weight
         eWeight = 1
         if(len(items) > 2):
             eWeight = float(items[2])
+        elif(not opts.PageRank):
+            print("\nERROR: All edges must have a weight, unless --PageRank is used. Edge (%s --> %s) does not have a weight entry."%(id1, id2))
+            exit(-1)
 
-        net.add_edge(id1, id2, weight=eWeight)
+        # Assign the weight. Note in the PageRank case, "weight" is
+        # interpreted as running PageRank and edgeflux on a weighted
+        # graph. 
+        net.add_edge(id1, id2, ksp_weight=eWeight, weight=eWeight)
 
+
+    # Print info about the network
+    print(nx.info(net))
 
     # Operate on only the largest connected component
-    print(nx.info(net))
-    conn_comps = nx.weakly_connected_component_subgraphs(net)
-    
-    # This is the only portion of the program which prevents
-    # compatability between Python 2 & 3. In 2, this object is a
-    # generator, but in 3 it is a list.
-    if(isinstance(conn_comps, types.GeneratorType)):
-        net = next(conn_comps)
-    elif(isinstance(conn_comps, list)):
-        net = conn_comps[0]
-    else:
-        print("Compatability error. Connected components object from NetworkX does not have acceptable type")
-        exit(-1)
-    
+    if(opts.largest_connected_component):
 
-    print("\nLargest weakly connected component:\n"+nx.info(net))
+        conn_comps = nx.weakly_connected_component_subgraphs(net)
+        
+        # This is the only portion of the program which prevents
+        # compatibility between Python 2 & 3. In 2, this object is a
+        # generator, but in 3 it is a list. Just check the type and
+        # handle accordingly to provide cross-compatibility.
+        if(isinstance(conn_comps, types.GeneratorType)):
+            net = next(conn_comps)
+        elif(isinstance(conn_comps, list)):
+            net = conn_comps[0]
+        else:
+            print("Compatibility error between NetworkX and Python versions. Connected components object from NetworkX does not have acceptable type.")
+            exit(-1)
+        
 
-    # Read the sources and targets on which to run pagerank and KSP
+        print("\n Using only the largest weakly connected component:\n"+nx.info(net))
+
+    # Read the sources and targets on which to run PageRank and KSP
     sources = set()
     targets = set()
 
@@ -257,27 +344,54 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
         sys.exit('ERROR: %d proteins are listed as both a source and target.' %(len(sources.intersection(targets))))
 
 
-    ## Run PageRank on the network
+    # Run PageRank on the network
+    # (if opts.PageRank == false, the weights were read from a file above)
+    if(opts.PageRank):
 
-    PR_PARAMS = {'q' : opts.q_param,\
-                 'eps' : opts.epsilon,\
-                 'maxIters' : opts.max_iters}
+        PR_PARAMS = {'q' : opts.q_param,\
+                     'eps' : opts.epsilon,\
+                     'maxIters' : opts.max_iters}
 
-    print('\nRunning PageRank on net.(q=%f)' %(opts.q_param))
+        print('\nRunning PageRank on net.(q=%f)' %(opts.q_param))
 
-    # The initial weights are entirely on the source nodes, so this 
-    # corresponds to a random walk that teleports back to the sources.
-    weights = dict.fromkeys(sources, 1.0)
-    prFinal = pagerank(net, weights, **PR_PARAMS)
+        # The initial weights are entirely on the source nodes, so this 
+        # corresponds to a random walk that teleports back to the sources.
+        weights = dict.fromkeys(sources, 1.0)
+        prFinal = pagerank(net, weights, **PR_PARAMS)
+        
+        # Write node visitation probabilities
+        # (function imported from PageRank)
+        writePageRankWeights(prFinal,filename='%s-node-pagerank.txt' % (opts.output))
 
-    ## Run KSP on the network
+        # Weight the edges by the flux from the nodes
+        calculateFluxEdgeWeights(net, prFinal)
 
-    # Weight the edges in the network for KSP computation, as well as
-    # removing outgoing edges from targets and incoming edges from
-    # sources. Create a supersource and supersink.
-    prepareNetForKSP(net, sources, targets, prFinal)
+        # Write edge fluxes
+        printEdgeFluxes('%s-edge-fluxes.txt' % (opts.output), net)
     
-    # Run the pathfinding algorithm
+    ## Prepare the network to run KSP
+
+    # Remove improper edges from the sources and targets. This portion
+    # must be performed before the log transformation, so that the
+    # renormalization within accounts for the probability lost to the
+    # removed edges.  These transformations are executed by default;
+    # to prevent them, use the opts.allow_mult_sources or opts.allow_mult_targets
+    # arguments.
+    if not opts.allow_mult_sources:
+        modifyGraphForKSP_removeEdgesToSources(net, sources)
+    if not opts.allow_mult_targets:
+        modifyGraphForKSP_removeEdgesFromTargets(net, targets)
+
+    # Transform the edge weights with a log transformation
+    if(not opts.no_log_transform):
+        logTransformEdgeWeights(net)
+
+    # Add a super source and super sink. Performed after the
+    # transformations so that the edges can be given an additive
+    # weight of 0 and thus not affect the resulting path cost.
+    modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtificialEdges = 0)
+    
+    ## Run the pathfinding algorithm
     print('\nComputing the k=%d shortest simple paths.' %(opts.k_param))
     paths = ksp.k_shortest_paths_yen(net, 'source', 'sink', opts.k_param, weight='ksp_weight')
 
@@ -315,14 +429,14 @@ NOTE: This operates on only the largest (weakly) connected component of the inpu
 
         # Each node is ranked by the first time it appears in a path.
         # Identify these by check for any nodes in the graph which do
-        # not have 'ksp_id' attribute, meaining they were just added
+        # not have 'ksp_id' attribute, meaning they were just added
         # from this path.
         for n in pathgraph.nodes():
             if 'ksp_id' not in pathgraph.node[n]:
                 pathgraph.node[n]['ksp_id'] = k
 
 
-    ## Write out the results to file
+    ## Write out the results to file    
 
     # Write a list of all edges encountered, ranked by the path they
     # first appeared in.
