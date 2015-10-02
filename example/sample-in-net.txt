@@ -1,21 +1,21 @@
 #Node1	Node2
-S1	A
-A	E
-E	T1
-E	F
-F	E
-F	A
-T1	F
-F	T2
-B	S1
-B	F
-B	C
-S2	B
-S2	C
-S2	T3
-C	G
-G	C
-C	F
-G	F
-G	T2
-G	T3
+S1	A	0.5
+A	E	0.5
+E	T1	0.5
+E	F	0.5
+F	E	0.5
+F	A	0.5
+T1	F	0.5
+F	T2	0.5
+B	S1	0.5
+B	F	0.5
+B	C	0.5
+S2	B	0.5
+S2	C	0.5
+S2	T3	0.5
+C	G	0.5
+G	C	0.5
+C	F	0.5
+G	F	0.5
+G	T2	0.5
+G	T3	0.5
