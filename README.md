@@ -36,18 +36,20 @@ signaling pathways from protein interaction networks.
   In its output, PathLinker ranks the interactions in the network with
   respect to the query.
 
-PathLinker uses two primary steps to produce this ranking:
-  * It runs the PageRank algorithm to find visitation probabilities for
-  each node. The PageRank is personalized in the sense that
-  teleportation is only to the receptors nodes in the query. PathLinker
-  uses these node visitation probabilities to compute edge traversal
-  probabilities, which are then used as weights in the graph for the
-  next step.
-  * It computes the *k*-shortest simple paths in the network from any
-  receptor to any transcription factor. This step uses a novel
-  modification of Yen's algorithm which allows fast computation for very
-  large *k* values, e.g., 10,000. PathLinker ranks each interaction in
-  the network by the index of the first path in which it appears.
+The primary algorithmic component of PathLinker is computing the 
+*k*-shortest simple paths in the network from any receptor to any
+transcription factor. This is accomplished with a novel modification of 
+Yen's algorithm which allows fast computation for very large *k* 
+values, e.g., 10,000. PathLinker ranks each interaction in the 
+network by the index of the first path in which it appears.
+
+PathLinker supports several different options for weighting the network.
+If the input graph has weights, these are interepted as multiplicative
+probabilities by default, and the most probable paths are computed after
+a log-transform. A flag is provided to interpret edge weights as additive
+costs instead. If the input graph does not have weights, PathLinker can
+run the PageRank algorithm to generate meaningful probablistic weights
+from visitation probabilities.
 
 See the publications referenced above for a formal description of the
 method.
