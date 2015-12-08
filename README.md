@@ -11,21 +11,11 @@ signaling pathways from protein interaction networks.
   * Nicholas Sharp (nsharp3@vt.edu)
   * T. M. Murali (tmmurali@cs.vt.edu) [**corresponding author**]
 
-### Relevant Publications
-  * Pathways on Demand: Automated Reconstruction of Human Signaling
-  Networks. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas
-  Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali
-  Virginia Tech, Blacksburg, VA. *Manuscript under review*.
-  * Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., &
-  Murali, T. M. (2013). Top-down network analysis to drive bottom-up
-  modeling of physiological processes. *Journal of Computational Biology*,
-  20(5), 409-418.
-
 ### Overview 
 
   PathLinker is a method for reconstructing signaling pathways from
   protein interaction and regulatory networks. Consider a protein-protein interaction
-  network represented as a directed, unweighted graph. The network may
+  network represented as a directed graph. The network may
   contain physical, signaling, and regulatory interactions between pairs
   of proteins. Given a query composed of a set of receptors and a set of
   transcription factors in this network that represent the "sources" and
@@ -34,7 +24,7 @@ signaling pathways from protein interaction networks.
   pathway. Specifically, PathLinker computes a subnetwork that connects
   the receptors in the query to the transcription factors in the query.
   In its output, PathLinker ranks the interactions in the network with
-  respect to the query.
+  respect to the query, as described below.
 
 The primary algorithmic component of PathLinker is computing the 
 *k*-shortest simple paths in the network from any receptor to any
@@ -48,7 +38,7 @@ If the input graph has weights, PathLinker interprets them as multiplicative
 probabilities by default, and it computes the most probable paths after
 a log-transform. The software supports a flag to interpret edge weights as additive
 costs instead. If the input graph does not have weights, PathLinker can
-run the PageRank algorithm as a pre-processing step to generate meaningful probablistic weights
+run the PageRank algorithm as a pre-processing step to generate probablistic weights
 from edges visitation probabilities.
 
 See the publications referenced above for a formal description of the
@@ -94,6 +84,8 @@ GNU GPLv3
 
 We will be very glad to hear from you if you use PathLinker in your work. If you publish a paper that uses PathLinker, please cite
 
-Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. (2013). Top-down network analysis to drive bottom-up modeling of physiological processes. *Journal of Computational Biology*, 20(5), 409-418.
+Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. (2013). Top-down network analysis to drive bottom-up modeling of physiological processes. *Journal of Computational Biology*, 20(5), 409-418. <a href="http://www.ncbi.nlm.nih.gov/pubmed/23641868">Pubmed</a>
 
+Pathways on Demand: Automated Reconstruction of Human Signaling Networks. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali, *npj Systems Biology and Applications*, in press, 2015. 
+  
 We encourage experimentation with PathLinker. Please don't hesitate to contact us if you would like to collaborate! 
