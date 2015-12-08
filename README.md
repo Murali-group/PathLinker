@@ -35,13 +35,12 @@ network by the index of the first path in which it appears.
 
 PathLinker supports several different options for weighting the network.
 If the input graph has weights, PathLinker interprets them as multiplicative
-probabilities by default, and it computes the most probable paths after
-a log-transform. The software supports a flag to interpret edge weights as additive
+probabilities by default, defines the cost of a path as the product of the weights of the edges in it, and computes the most probable paths by using a log-transform. The software supports a flag to interpret edge weights as additive
 costs instead. If the input graph does not have weights, PathLinker can
 run the PageRank algorithm as a pre-processing step to generate probablistic weights
 from edges visitation probabilities.
 
-See the publications referenced above for a formal description of the
+See the publications referenced below for a formal description of the
 method.
 
 ### What's included
@@ -84,8 +83,8 @@ GNU GPLv3
 
 We will be very glad to hear from you if you use PathLinker in your work. If you publish a paper that uses PathLinker, please cite
 
-Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. (2013). Top-down network analysis to drive bottom-up modeling of physiological processes. *Journal of Computational Biology*, 20(5), 409-418. <a href="http://www.ncbi.nlm.nih.gov/pubmed/23641868">Pubmed</a>
+1. Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. (2013). Top-down network analysis to drive bottom-up modeling of physiological processes. *Journal of Computational Biology*, 20(5), 409-418. <a href="http://www.ncbi.nlm.nih.gov/pubmed/23641868">Pubmed</a>
 
-Pathways on Demand: Automated Reconstruction of Human Signaling Networks. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali, *npj Systems Biology and Applications*, in press, 2015. 
+2. Pathways on Demand: Automated Reconstruction of Human Signaling Networks. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali, *npj Systems Biology and Applications*, in press, 2015. 
   
 We encourage experimentation with PathLinker. Please don't hesitate to contact us if you would like to collaborate! 
