@@ -89,16 +89,16 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 # If the weights in the input graph correspond to probabilities,
 # shortest paths in the output graph are maximum-probability paths in
 # the input graph.
-def logTransformEdgeWeights(net):
+def logTransformEdgeWeights(net, sumWeight):
    
     # In the "standard" PathLinker case, this is necessary to account
     # for the probability that is lost when edges are removed in
     # modifyGraphForKSP_removeEdges(), along with probability lost to
     # zero degree nodes in the edge flux calculation.
-    sumWeight = 0
-    for u,v in net.edges():
-        sumWeight += net.edge[u][v]['ksp_weight']
     
+	#sumWeight = 0
+    #for u,v in net.edges():
+    #    sumWeight += net.edge[u][v]['ksp_weight']
     for u,v in net.edges():
         w = -log(max([0.000000001, net.edge[u][v]['ksp_weight'] / sumWeight]))/log(10)
         net.edge[u][v]['ksp_weight'] = w
@@ -202,6 +202,9 @@ REQUIRED arguments:
 
     parser.add_option('', '--largest-connected-component', action='store_true', default=False,\
         help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
+		
+    parser.add_option('', '--normalize-weight', type='float', default=1.0,\
+		help='Weight that all the edge weights are divided by during log transform. Typical value is the sum of all weights [[NEEDS IMPROVEMENT]] (default=1.0)')
 
     # Random Walk Group
     group = OptionGroup(parser, 'Random Walk Options')
@@ -213,7 +216,7 @@ REQUIRED arguments:
         help='The value of q indicates the probability that the random walker teleports back to a source node during the random walk process. (default=0.5)')
 
     group.add_option('-e', '--epsilon', action='store', type='float', default=0.0001,\
-            help='A small value used to test for convergence of the iterative implementation of PageRank. (default=0.0001)')
+        help='A small value used to test for convergence of the iterative implementation of PageRank. (default=0.0001)')
 
     group.add_option('', '--max-iters', action='store', type='int', default=500,\
         help='Maximum number of iterations to run the PageRank algorithm. (default=500)')
@@ -384,7 +387,7 @@ REQUIRED arguments:
 
     # Transform the edge weights with a log transformation
     if(not opts.no_log_transform):
-        logTransformEdgeWeights(net)
+        logTransformEdgeWeights(net, opts.normalize_weight)
 
     # Add a super source and super sink. Performed after the
     # transformations so that the edges can be given an additive
