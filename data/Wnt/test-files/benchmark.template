@@ -1,0 +1,17 @@
+Tabulate wall-clock time and CPU time for the following combinations:
+									 | 	real 		| user
+-------------------------------------+--------------+---------------
+Default 							 | 7.536s 		| 2m6.210s
+With 1 core, taskset -c 8 java ... 	 | 47.458s		| 46.920s
+With 4GB initial heap, -Xms4g 		 | 3.078s		| 12.674s
+With 8GB initial heap, -Xms8g 		 | 1.829s		| 2.461s
+With 16GB initial heap, -Xms16g 	 | 1.855s		| 2.483s
+With -XX:+UseConcMarkSweepGC 		 | 4.481s		| 29.152s
+With -XX:+UseParallelGC 			 | 9.061s		| 3m1.626s
+With -XX:+UseParallelOldGC 			 | 5.622s		| 1m19.057s
+With -XX:+UseSerialGC 				 | 4.740s		| 5.260s
+With -XX:+UseG1GC 					 | 3.624s		| 21.047s
+									 |				|
+Best combination:					 |				|
+-Xms8g -XX:+UserSerialGC			 |				|
+-------------------------------------+--------------+---------------
