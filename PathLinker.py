@@ -79,6 +79,23 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 
     return
 
+# Normalizes the edges by the weight factor.
+# This weight penalizes the score of every path by a factor equal
+# to (the number of edges in the path)^(this factor).
+#
+# This was previously done in the logTransformEdgeWeights method
+# with a parameter weight=(sum of all edge weights). In the "standard"
+# PathLinker case, this was necessary to account for the probability that
+# is lost when edges are removed in modifyGraphForKSP_removeEdges(), along
+# with probability lost to zero degree nodes in the edge flux calculation.
+def normalizeWeights(net, weight):
+	if weight == 1.0:
+		return
+	
+	for u,v in net.edges():
+		w = net.edge[u][v]['ksp_weight']/weight
+		net.edge[u][v]['ksp_weight'] = w
+	
 # Apply a negative logarithmic transformation to edge weights,
 # converting multiplicative values (where higher is better) to additive
 # costs (where lower is better).
@@ -89,18 +106,9 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 # If the weights in the input graph correspond to probabilities,
 # shortest paths in the output graph are maximum-probability paths in
 # the input graph.
-def logTransformEdgeWeights(net, sumWeight):
-   
-    # In the "standard" PathLinker case, this is necessary to account
-    # for the probability that is lost when edges are removed in
-    # modifyGraphForKSP_removeEdges(), along with probability lost to
-    # zero degree nodes in the edge flux calculation.
-    
-	#sumWeight = 0
-    #for u,v in net.edges():
-    #    sumWeight += net.edge[u][v]['ksp_weight']
+def logTransformEdgeWeights(net):
     for u,v in net.edges():
-        w = -log(max([0.000000001, net.edge[u][v]['ksp_weight'] / sumWeight]))/log(10)
+        w = -log(max([0.000000001, net.edge[u][v]['ksp_weight']]))/log(10)
         net.edge[u][v]['ksp_weight'] = w
 
 # Given a probability distribution over the nodes, calculate the
@@ -204,7 +212,7 @@ REQUIRED arguments:
         help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
 		
     parser.add_option('', '--normalize-weight', type='float', default=1.0,\
-		help='Weight that all the edge weights are divided by during log transform. Typical value is the sum of all weights [[NEEDS IMPROVEMENT]] (default=1.0)')
+		help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(this factor). (default=1.0)')
 
     # Random Walk Group
     group = OptionGroup(parser, 'Random Walk Options')
@@ -385,9 +393,12 @@ REQUIRED arguments:
     if not opts.allow_mult_targets:
         modifyGraphForKSP_removeEdgesFromTargets(net, targets)
 
+	# Normalize edge weights by normalize factor
+	normalizeWeights(net, opts.normalize_weight)
+		
     # Transform the edge weights with a log transformation
     if(not opts.no_log_transform):
-        logTransformEdgeWeights(net, opts.normalize_weight)
+        logTransformEdgeWeights(net)
 
     # Add a super source and super sink. Performed after the
     # transformations so that the edges can be given an additive
