@@ -83,8 +83,8 @@ GNU GPLv3
 
 We will be very glad to hear from you if you use PathLinker in your work. If you publish a paper that uses PathLinker, please cite
 
-1. Poirel, C. L., Rodrigues, R. R., Chen, K. C., Tyson, J. J., & Murali, T. M. (2013). Top-down network analysis to drive bottom-up modeling of physiological processes. *Journal of Computational Biology*, 20(5), 409-418. <a href="http://www.ncbi.nlm.nih.gov/pubmed/23641868">Pubmed</a>
+1. <a href="http://www.nature.com/articles/npjsba20162">Pathways on Demand: Automated Reconstruction of Human Signaling Networks</a>. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali, *npj Systems Biology and Applications*, 2, Article number 16002, 2016. 
 
-2. Pathways on Demand: Automated Reconstruction of Human Signaling Networks. Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali, *npj Systems Biology and Applications*, in press, 2015. 
+2. <a href="http://www.ncbi.nlm.nih.gov/pubmed/23641868">Top-down network analysis to drive bottom-up modeling of physiological processes</a>. Christopher L. Poirel, Richard R. Rodrigues, Katherine C. Chen, John J. Tyson, and T. M. Murali.*Journal of Computational Biology*, 20(5), 409-418, 2013. 
   
 We encourage experimentation with PathLinker. Please don't hesitate to contact us if you would like to collaborate! 
