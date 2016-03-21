@@ -91,7 +91,7 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 def normalizeWeights(net, weight):
 	if weight == 1.0:
 		return
-	
+ 	
 	for u,v in net.edges():
 		w = net.edge[u][v]['ksp_weight']/weight
 		net.edge[u][v]['ksp_weight'] = w
