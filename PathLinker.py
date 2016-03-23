@@ -79,7 +79,7 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 
     return
 
-# Normalizes the edges by the weight factor.
+# Applies a user specified edge penalty to each edge.
 # This weight penalizes the score of every path by a factor equal
 # to (the number of edges in the path)^(this factor).
 #
@@ -88,7 +88,7 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 # PathLinker case, this was necessary to account for the probability that
 # is lost when edges are removed in modifyGraphForKSP_removeEdges(), along
 # with probability lost to zero degree nodes in the edge flux calculation.
-def normalizeWeights(net, weight):
+def applyEdgePenalty(net, weight):
 	if weight == 1.0:
 		return
  	
@@ -211,7 +211,7 @@ REQUIRED arguments:
     parser.add_option('', '--largest-connected-component', action='store_true', default=False,\
         help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
 		
-    parser.add_option('', '--normalize-weight', type='float', default=1.0,\
+    parser.add_option('', '--edge-penalty', type='float', default=1.0,\
 		help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(this factor). (default=1.0)')
 
     # Random Walk Group
@@ -393,8 +393,8 @@ REQUIRED arguments:
     if not opts.allow_mult_targets:
         modifyGraphForKSP_removeEdgesFromTargets(net, targets)
 
-	# Normalize edge weights by normalize factor
-	normalizeWeights(net, opts.normalize_weight)
+	# Apply the user specified edge penalty
+	applyEdgePenalty(net, opts.edge_penalty)
 		
     # Transform the edge weights with a log transformation
     if(not opts.no_log_transform):
