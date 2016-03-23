@@ -89,6 +89,7 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 # is lost when edges are removed in modifyGraphForKSP_removeEdges(), along
 # with probability lost to zero degree nodes in the edge flux calculation.
 def applyEdgePenalty(net, weight):
+
 	if weight == 1.0:
 		return
  	
@@ -107,9 +108,27 @@ def applyEdgePenalty(net, weight):
 # shortest paths in the output graph are maximum-probability paths in
 # the input graph.
 def logTransformEdgeWeights(net):
+
     for u,v in net.edges():
         w = -log(max([0.000000001, net.edge[u][v]['ksp_weight']]))/log(10)
         net.edge[u][v]['ksp_weight'] = w
+
+
+# "Undoes" the logarithmic transform to the path lengths, converting
+# the path lengths back into terms of the original edge weights
+def undoLogTransformPathLengths(paths):
+
+    new_paths_list = []
+
+    # Reconstructs the path list with each edge
+    # distance un-log transformed
+    for path in paths:
+        new_path = [(x[0], 10 ** (-1 * x[1])) for x in path]
+        new_paths_list.append(new_path)
+
+    print "old paths size: " + str(len(paths)) + " new paths size: " + str(len(new_paths_list))
+    return new_paths_list
+
 
 # Given a probability distribution over the nodes, calculate the
 # probability "flowing" though the outgoing edges of every node. Used
@@ -462,6 +481,12 @@ REQUIRED arguments:
     # requested.
     if(opts.write_paths):
         kspOutfile = '%sk_%d-paths.txt' %(opts.output, opts.k_param)
+
+        # Un-does the logarithmic transformation on the path lengths to
+        # make the path length in terms of the original edge weights
+        if not opts.no_log_transform:
+            paths = undoLogTransformPathLengths(paths)
+
         printKSPPaths(kspOutfile, paths)
         print('KSP paths are in "%s"' %(kspOutfile))
 
