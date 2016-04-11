@@ -76,7 +76,6 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
     for t in targets:
         net.add_edge(t, 'sink', weight=1)
         net.edge[t]['sink']['ksp_weight'] = weightForArtificialEdges
-
     return
 
 # Applies a user specified edge penalty to each edge.
@@ -90,16 +89,15 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
 # with probability lost to zero degree nodes in the edge flux calculation.
 def applyEdgePenalty(net, weight):
 
-	if weight == 1.0:
-		return
- 	
-	for u,v in net.edges():
-		w = net.edge[u][v]['ksp_weight']/weight
-		net.edge[u][v]['ksp_weight'] = w
-		
-	return
+    if weight == 1.0:
+        return
+     
+    for u,v in net.edges():
+        w = net.edge[u][v]['ksp_weight']/weight
+        net.edge[u][v]['ksp_weight'] = w
+    return
 
-	
+    
 # Apply a negative logarithmic transformation to edge weights,
 # converting multiplicative values (where higher is better) to additive
 # costs (where lower is better).
@@ -115,8 +113,7 @@ def logTransformEdgeWeights(net):
     for u,v in net.edges():
         w = -log(max([0.000000001, net.edge[u][v]['ksp_weight']]))/log(10)
         net.edge[u][v]['ksp_weight'] = w
-
-	return
+    return
 
 
 # "Undoes" the logarithmic transform to the path lengths, converting
@@ -126,11 +123,10 @@ def undoLogTransformPathLengths(paths):
     new_paths_list = []
 
     # Reconstructs the path list with each edge distance un-log transformed.
-	# We build a new list because tuples are unmodifiable.
+    # We build a new list because tuples are unmodifiable.
     for path in paths:
         new_path = [(x[0], 10 ** (-1 * x[1])) for x in path]
         new_paths_list.append(new_path)
-
     return new_paths_list
 
 
@@ -147,8 +143,7 @@ def calculateFluxEdgeWeights(net, nodeWeights):
     for u,v in net.edges():
         w = nodeWeights[u] * net[u][v]['weight']/net.out_degree(u, 'weight')
         net.edge[u][v]['ksp_weight'] = w
-		
-	return
+    return
 
 
 # Print the edges in the k shortest paths graph computed by PathLinker.
@@ -235,9 +230,9 @@ REQUIRED arguments:
 
     parser.add_option('', '--largest-connected-component', action='store_true', default=False,\
         help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
-		
+        
     parser.add_option('', '--edge-penalty', type='float', default=1.0,\
-		help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(this factor). (default=1.0)')
+        help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(this factor). (default=1.0)')
 
     # Random Walk Group
     group = OptionGroup(parser, 'Random Walk Options')
@@ -418,9 +413,9 @@ REQUIRED arguments:
     if not opts.allow_mult_targets:
         modifyGraphForKSP_removeEdgesFromTargets(net, targets)
 
-	# Apply the user specified edge penalty
-	applyEdgePenalty(net, opts.edge_penalty)
-		
+    # Apply the user specified edge penalty
+    applyEdgePenalty(net, opts.edge_penalty)
+        
     # Transform the edge weights with a log transformation
     if(not opts.no_log_transform):
         logTransformEdgeWeights(net)
