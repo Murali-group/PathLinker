@@ -96,6 +96,9 @@ def applyEdgePenalty(net, weight):
 	for u,v in net.edges():
 		w = net.edge[u][v]['ksp_weight']/weight
 		net.edge[u][v]['ksp_weight'] = w
+		
+	return
+
 	
 # Apply a negative logarithmic transformation to edge weights,
 # converting multiplicative values (where higher is better) to additive
@@ -113,6 +116,8 @@ def logTransformEdgeWeights(net):
         w = -log(max([0.000000001, net.edge[u][v]['ksp_weight']]))/log(10)
         net.edge[u][v]['ksp_weight'] = w
 
+	return
+
 
 # "Undoes" the logarithmic transform to the path lengths, converting
 # the path lengths back into terms of the original edge weights
@@ -120,13 +125,12 @@ def undoLogTransformPathLengths(paths):
 
     new_paths_list = []
 
-    # Reconstructs the path list with each edge
-    # distance un-log transformed
+    # Reconstructs the path list with each edge distance un-log transformed.
+	# We build a new list because tuples are unmodifiable.
     for path in paths:
         new_path = [(x[0], 10 ** (-1 * x[1])) for x in path]
         new_paths_list.append(new_path)
 
-    print "old paths size: " + str(len(paths)) + " new paths size: " + str(len(new_paths_list))
     return new_paths_list
 
 
@@ -143,6 +147,8 @@ def calculateFluxEdgeWeights(net, nodeWeights):
     for u,v in net.edges():
         w = nodeWeights[u] * net[u][v]['weight']/net.out_degree(u, 'weight')
         net.edge[u][v]['ksp_weight'] = w
+		
+	return
 
 
 # Print the edges in the k shortest paths graph computed by PathLinker.
