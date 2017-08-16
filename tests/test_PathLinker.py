@@ -54,6 +54,5 @@ class TestReadNetworkFile(unittest.TestCase):
         self.assertEqual(len(net.nodes()), 2)
         self.assertEqual(len(net.edges()), 1)
 
-
 if __name__ == '__main__':
     unittest.main()
