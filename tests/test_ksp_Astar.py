@@ -3,7 +3,7 @@ import networkx as nx
 import ast
 from io import StringIO
 
-import pathlinker.ksp_Astar as ksp
+import ksp_Astar as ksp
 
 class Test_k_shortest_paths_yen(unittest.TestCase):
 

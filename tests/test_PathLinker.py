@@ -2,7 +2,7 @@ import unittest
 import networkx as nx
 from io import StringIO
 
-import pathlinker.PathLinker as pl
+import PathLinker as pl
 
 class TestReadNetworkFile(unittest.TestCase):
 
@@ -44,7 +44,7 @@ class TestReadNetworkFile(unittest.TestCase):
 
     def test_no_weights_pagerank_false_exit(self):
         contents = StringIO(u'1\t1\n1\t3')
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(Exception):
             net = pl.readNetworkFile(contents, False) 
         
     def test_no_weights_pagerank_true(self):

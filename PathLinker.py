@@ -29,29 +29,8 @@ import networkx as nx
 
 # local modules
 import ksp_Astar as ksp
-from pagerank.PageRank import pagerank, writePageRankWeights
+from PageRank import pagerank, writePageRankWeights
 
-# The general idea here is as follows:
-# PathLinker by default can contain large, redundant paths that consist of
-# largely smaller paths with mostly the same edges. The idea here is to
-# FORCE PathLinker to use N unique edges. We do this by adding duplictes of
-# the graph in layers, and for each edge (u,v) in the original graph,
-# add add (u, v2) to the second layer, (u2, v3) to the third layer, etc.
-# We place the target at the top level.
-
-# Note: it might be important to allow the setting of a "minimum path length"
-# parameter as well. This would mean creating shortcuts from the minimum
-# path level to the sink level.
-
-# Note: some graphs might not be able to reach maximum height
-def modifyGraphForKSP_addLayers(net):
-    None
-
-def addWithinLayerEdges(net, layers):
-    None
-
-def addBetweenLayerEdges(net, layers):
-    None
 
 # Modifies the structure of the graph by removing all edges entering
 # sources. These edges will never contribute to a
@@ -249,10 +228,10 @@ def readNetworkFile(network_file, pagerank=False):
                 eWeight = float(items[2])
 
             else:
-                print("""\nERROR: All edges must have a weight, unless 
-                         --PageRank is used. Edge (%s --> %s) does not have a 
-                         weight entry.""" % (id1, id2))
-                exit(-1)
+                raise Exception(
+                    "ERROR: All edges must have a weight "
+                    "unless --PageRank is used. Edge (%s --> %s) does "
+                    "not have a weight entry." % (id1, id2))
                 
         # Assign the weight. Note in the PageRank case, "weight" is
         # interpreted as running PageRank and edgeflux on a weighted
