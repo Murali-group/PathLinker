@@ -69,11 +69,13 @@ For all input files, lines beginning with a hash (#)
 Python packages:
   * NetworkX
 
-The code is valid in both Python 2 and Python 3.
+Older releases of this code are valid in both Python 2 and Python 3. With this
+current version, Python 2 compatability is not guaranteed, and some unit tests
+fail under Python 2.
 
-Paths of equal length may be returned and processed in a different
-order according to your version of Python and NetworkX. The results should be interpreted
-as equivalent, although the output is not textually identical.
+Paths of equal length may be returned and processed in a different order
+according to your version of Python and NetworkX. The results should be
+interpreted as equivalent, although the output is not textually identical.
 
 ### License
 
