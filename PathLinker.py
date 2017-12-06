@@ -27,10 +27,17 @@ from math import log
 import networkx as nx
 
 
-# Modifies the structure of the graph by removing all edges entering
-# sources. These edges will never contribute to a
-# path, according to the PathLinker formulation.
 def modifyGraphForKSP_removeEdgesToSources(net, sources):
+    """
+    Modifies the structure of a graph by removing all edges entering 
+    sources. These edges will never contribute to a path, according
+    to the PathLinker problem formulation.
+
+    :param net: NetworkX graph
+
+    :param sources: List of source nodes
+
+    """
 
     # We will never use edges leaving a target or entering a source, since
     # we do not allow start/end nodes to be internal to any path.
@@ -42,10 +49,18 @@ def modifyGraphForKSP_removeEdgesToSources(net, sources):
             net.remove_edge(u,v)
     return
 
-# Modifies the structure of the graph by removing all edges 
-# exiting targets. These edges will never contribute to a
-# path, according to the PathLinker formulation.
+
 def modifyGraphForKSP_removeEdgesFromTargets(net, targets):
+    """
+    Modifies the structure of a graph by removing all edges existing
+    targets. These edges will never contribute to a path, according
+    to the PathLinker problem formulation.
+
+    :param net: NetworkX graph
+
+    :param sources: List of target nodes
+
+    """
 
     # We will never use edges leaving a target or entering a source, since
     # we do not allow start/end nodes to be internal to any path.
@@ -57,12 +72,25 @@ def modifyGraphForKSP_removeEdgesFromTargets(net, targets):
             net.remove_edge(u,v)
     return
 
-# Modifies the structure of the graph by adding a supersource with an
-# edge to every source, and a supersink with an edge from every target.
-# These artificial edges are given weight 'weightForArtificialEdges',
-# which should correspond to a "free" edge in the current interpretation
-# of the graph.
+
 def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtificialEdges=0):
+    """
+    Modifies the structure of a graph by adding a supersource with an
+    edge to every source, and a supersink with an edge from every
+    target. These artificial edges are given the weight
+    'weightForArtificialEdges'. A weight of 0 should correspond to a 
+    "free" edge in the current interpretation of the graph.
+
+    :param net: NetworkX graph
+
+    :param sources: List of source nodes
+
+    :param targets: List of target nodes
+    
+    :param weightForArtificialEdges: Weight to be assigned to edges
+        created by this process
+
+    """
 
     # Add a supersource and supersink. Shortest paths from source to sink are the same
     # as shortest paths from "sources" to "targets".
@@ -74,16 +102,23 @@ def modifyGraphForKSP_addSuperSourceSink(net, sources, targets, weightForArtific
         net.edge[t]['sink']['ksp_weight'] = weightForArtificialEdges
     return
 
-# Applies a user specified edge penalty to each edge.
-# This weight penalizes the score of every path by a factor equal
-# to (the number of edges in the path)^(this factor).
-#
-# This was previously done in the logTransformEdgeWeights method
-# with a parameter weight=(sum of all edge weights). In the "standard"
-# PathLinker case, this was necessary to account for the probability that
-# is lost when edges are removed in modifyGraphForKSP_removeEdges(), along
-# with probability lost to zero degree nodes in the edge flux calculation.
+
 def applyEdgePenalty(net, weight):
+    """
+    Applies a user-specified edge penalty to each edge. This weight
+    penalizes the score of every path by a factor equal to
+    (the number of edges in the path)^(this factor).
+
+    This was previously done in the logTransformEdgeWeights method
+    with a parameter weight=(sum of all edge weights). In the 
+    "standard" PathLinker case, this was necessary to account for the
+    probability that is lost when edges are removed in 
+    modifyGraphForKSP_removeEdges(), along with the probability lost
+    to zero degree nodes in the edge flux calculation.
+
+    :param net: NetworkX graph
+    :param weight: user-specified edge penalty
+    """
 
     if weight == 1.0:
         return
@@ -94,17 +129,22 @@ def applyEdgePenalty(net, weight):
     return
 
     
-# Apply a negative logarithmic transformation to edge weights,
-# converting multiplicative values (where higher is better) to additive
-# costs (where lower is better).
-#
-# Before the transformation, weights are normalized to sum to one,
-# supporting an interpretation as probabilities.
-#
-# If the weights in the input graph correspond to probabilities,
-# shortest paths in the output graph are maximum-probability paths in
-# the input graph.
 def logTransformEdgeWeights(net):
+    """
+    Apply a negative logarithmic transformation to edge weights,
+    converting multiplicative values (where higher is better) to
+    additive costs (where lower is better).
+
+    Before the transformation, weights are normalized to sum to one,
+    supporting an interpretation as probabilities.
+
+    If the weights in the input graph correspond to probabilities,
+    shortest paths in the output graph are maximum-probability paths
+    in the input graph.
+
+    :param net: NetworkX graph
+
+    """
 
     for u,v in net.edges():
         w = -log(max([0.000000001, net.edge[u][v]['ksp_weight']]))/log(10)
@@ -112,9 +152,14 @@ def logTransformEdgeWeights(net):
     return
 
 
-# "Undoes" the logarithmic transform to the path lengths, converting
-# the path lengths back into terms of the original edge weights
 def undoLogTransformPathLengths(paths):
+    """
+    Undoes the logarithmic transform to path lengths, converting the
+    path lengths back into terms of the original edge weights
+
+    :param paths: paths to apply the transform to
+
+    """
 
     new_paths_list = []
 
@@ -126,10 +171,17 @@ def undoLogTransformPathLengths(paths):
     return new_paths_list
 
 
-# Given a probability distribution over the nodes, calculate the
-# probability "flowing" though the outgoing edges of every node. Used
-# to assign edge weights after PageRank-ing nodes.
 def calculateFluxEdgeWeights(net, nodeWeights):
+    """
+    Given a probability distribution over the nodes, calculate the
+    probability "flowing" through the outgoing edges of every node.
+    Used to assign edge weights after PageRank-ing nodes.
+
+    :param net: NetworkX graph
+
+    :parma nodeWeights: dictionary containing weights of the nodes
+
+    """
     
     # the flux score for and edge (u,v) is f_uv = (w_uv p_u)/d_u where
     # w_uv is the weight of the edge (u,v), p_u is the normalized visitation
@@ -142,11 +194,20 @@ def calculateFluxEdgeWeights(net, nodeWeights):
     return
 
 
-# Print the edges in the k shortest paths graph computed by PathLinker.
-# This creates a tab-delimited file with one edge per line with three columns:
-# tail, head, and KSP index.
-# Here, 'ksp index' indicates the index of the first shortest path in which the edge is used.
 def printKSPGraph(f, graph):
+    """
+    Print the edge in the k shortest paths graph computed by 
+    PathLinker. This creates a tab-delimited file with one edge per
+    line with three columns: tail, head, and KSP index.
+
+    Here, 'ksp index' indicates the index of the first shortest path
+    in which the edge is used.
+
+    :param f: Name of the file to write out
+
+    :param graph: NetworkX graph
+
+    """
 
     outf = open(f, 'w')
     outf.write('#tail\thead\tKSP index\n')
@@ -161,11 +222,18 @@ def printKSPGraph(f, graph):
     return
 
 
-# Print the k shortest paths in order.
-# This creates a tab-delimited file with three columns: the number of
-# the path, the length of the path (sum of weights), and the sequence of
-# nodes in the path. 
 def printKSPPaths(f, paths):
+    """
+    Print the k shortest paths in order. This creates a tab-delimited
+    file with three columns: the rank of the path (which k it was 
+    returned for), the length of the path (sum of weights), and the 
+    sequence of nodes in the path.
+
+    :param f: Name of the file to write out
+
+    :param paths: The paths to print out
+
+    """
 
     outf = open(f, 'w')
     outf.write('#KSP\tpath_length\tpath\n')
@@ -177,9 +245,17 @@ def printKSPPaths(f, paths):
     outf.close()
     return
 
-# Print the edges with the flux weight.
-# Sort by decreasing of flux weight.
+
 def printEdgeFluxes(f, graph):
+    """
+    Print the edges with the flux weight. Sort by decreasing flux
+    weight.
+
+    :param f: Name of the file to write out
+
+    :param graph: NetworkX graph
+
+    """
 
     outf = open(f, 'w')
     outf.write('#tail\thead\tedge_flux\n')
@@ -192,6 +268,7 @@ def printEdgeFluxes(f, graph):
         outf.write('%s\t%s\t%0.5e\n' %(t, h, w))
     outf.close()
     return
+
 
 def readNetworkFile(network_file, pagerank=False):
     
