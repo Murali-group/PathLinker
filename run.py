@@ -174,10 +174,10 @@ REQUIRED arguments:
         writePageRankWeights(prFinal,filename='%s-node-pagerank.txt' % (opts.output))
 
         # Weight the edges by the flux from the nodes
-        calculateFluxEdgeWeights(net, prFinal)
+        pl.calculateFluxEdgeWeights(net, prFinal)
 
         # Write edge fluxes
-        printEdgeFluxes('%s-edge-fluxes.txt' % (opts.output), net)
+        pl.printEdgeFluxes('%s-edge-fluxes.txt' % (opts.output), net)
     
     ## Prepare the network to run KSP
 
