@@ -27,7 +27,7 @@ pathway between the receptors and transcription factors.
 To run PathLinker on this network, use the command:
 (assuming the example directory is the working directory)
 
-    python ../PathLinker.py sample-in-net.txt sample-in-nodetypes.txt
+    python ../run.py sample-in-net.txt sample-in-nodetypes.txt
 
 This will create a file, `out_k_100-ranked-edges.txt`, which ranks the
 interactions (edges) as described above. Some edges are not listed in
@@ -58,7 +58,7 @@ but lacks weights.
 To run PathLinker with PageRank on this network, use the command:
 (assuming the example directory is the working directory)
 
-    python ../PathLinker.py --PageRank sample-in-net-noweights.txt sample-in-nodetypes.txt
+    python ../run.py --PageRank sample-in-net-noweights.txt sample-in-nodetypes.txt
 
 ### Running PageRank
 
