@@ -1,4 +1,5 @@
 import sys
+import types
 import networkx as nx
 from optparse import OptionParser, OptionGroup
 
