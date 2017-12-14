@@ -30,7 +30,7 @@ REQUIRED arguments:
     parser = OptionParser(usage=usage)
 
     # General Options
-    parser.add_option('-o', '--output', type='string', default='out_', metavar='STR',\
+    parser.add_option('-o', '--output', type='string', default='out', metavar='STR',\
         help='A string to prepend to all output files. (default="out")')
 
     parser.add_option('', '--write-paths', action='store_true', default=False,\
@@ -257,14 +257,14 @@ REQUIRED arguments:
 
     # Write a list of all edges encountered, ranked by the path they
     # first appeared in.
-    kspGraphOutfile = '%sk_%d-ranked-edges.txt' %(opts.output, opts.k_param)
+    kspGraphOutfile = '%sk-%d-ranked-edges.txt' %(opts.output, opts.k_param)
     pl.printKSPGraph(kspGraphOutfile, pathgraph)
     print('\nKSP results are in "%s"' %(kspGraphOutfile))
 
     # Write a list of all paths found by the ksp algorithm, if
     # requested.
     if(opts.write_paths):
-        kspOutfile = '%sk_%d-paths.txt' %(opts.output, opts.k_param)
+        kspOutfile = '%sk-%d-paths.txt' %(opts.output, opts.k_param)
 
         # Un-does the logarithmic transformation on the path lengths to
         # make the path length in terms of the original edge weights
