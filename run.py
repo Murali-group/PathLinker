@@ -68,10 +68,13 @@ REQUIRED arguments:
         help='The number of shortest paths to find. (default=100)')
 
     group.add_option('','--allow-mult-targets', action='store_true', default=False,\
-                     help='By default, PathLinker will remove outgoing edges from targets to ensure that there is only one target on each path.  If --allow-mult-targets is specified, these edges are not removed.')
+        help='By default, PathLinker will remove outgoing edges from targets to ensure that there is only one target on each path.  If --allow-mult-targets is specified, these edges are not removed.')
 
     group.add_option('','--allow-mult-sources', action='store_true', default=False,\
-                     help='By default, PathLinker will remove incoming edges to sources to ensure that there is only one source on each path.  If --allow-mult-sources is specified, these edges are not removed.')
+        help='By default, PathLinker will remove incoming edges to sources to ensure that there is only one source on each path.  If --allow-mult-sources is specified, these edges are not removed.')
+     
+    group.add_option('', '--include-tied-paths', action='store_true', default=False,\
+        help='Return the k shortest paths as well as all paths with length equal to that of the kth path.')
 
     parser.add_option_group(group)
 
@@ -207,7 +210,7 @@ REQUIRED arguments:
     
     ## Run the pathfinding algorithm
     print('\nComputing the k=%d shortest simple paths.' %(opts.k_param))
-    paths = ksp.k_shortest_paths_yen(net, 'source', 'sink', opts.k_param, weight='ksp_weight')
+    paths = ksp.k_shortest_paths_yen(net, 'source', 'sink', opts.k_param, weight='ksp_weight', clip=not opts.include_tied_paths)
 
     if len(paths)==0:
         sys.exit('\tERROR: Targets are not reachable from the sources.')
