@@ -3,10 +3,10 @@ Yen's k shortest loopless paths algorithm, augmented to use A* as a pathfinding
 subroutine to improve performance.
 
 For more information, see the following work:
-Pathways on Demand: Automated Reconstruction of Human Signaling Networks
-Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali
+Pathways on Demand: Automated Reconstruction of Human Signaling Networks. 
+Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali. 
+npj Systems Biology and Applications, 2, Article number 16002, 2016
 Virginia Tech, Blacksburg, VA
-Manuscript under review.
 
 Relevant reference:
     Yen, J. Y. (1971). Finding the k shortest loopless paths in a network.

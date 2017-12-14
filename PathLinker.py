@@ -6,11 +6,10 @@ from any receptor protein (source node) to any transcriptional regulator
 (target node) in a protein-protein interactome.
 
 See the following paper for more details:
-Pathways on Demand: Automated Reconstruction of Human Signaling Networks
-Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, 
-Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali
+Pathways on Demand: Automated Reconstruction of Human Signaling Networks. 
+Anna Ritz, Christopher L. Poirel, Allison N. Tegge, Nicholas Sharp, Allison Powell, Kelsey Simmons, Shiv D. Kale, and T. M. Murali. 
+npj Systems Biology and Applications, 2, Article number 16002, 2016
 Virginia Tech, Blacksburg, VA
-Manuscript under review.
 
 This code is authored by:
 Mitch Wagner: mitchw94@vt.edu
