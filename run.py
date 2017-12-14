@@ -1,4 +1,5 @@
 import sys
+import types
 import networkx as nx
 from optparse import OptionParser, OptionGroup
 
@@ -119,7 +120,6 @@ REQUIRED arguments:
         else:
             print("Compatibility error between NetworkX and Python versions. Connected components object from NetworkX does not have acceptable type.")
             exit(-1)
-        
 
         print("\n Using only the largest weakly connected component:\n"+nx.info(net))
 

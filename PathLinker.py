@@ -21,7 +21,6 @@ T. M. Murali: tmmurali@cs.vt.edu
 
 """
 
-import types
 from math import log
 
 import networkx as nx
