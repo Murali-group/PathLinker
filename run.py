@@ -269,7 +269,7 @@ REQUIRED arguments:
         # Un-does the logarithmic transformation on the path lengths to
         # make the path length in terms of the original edge weights
         if not opts.no_log_transform:
-            paths = undoLogTransformPathLengths(paths)
+            paths = pl.undoLogTransformPathLengths(paths)
 
         pl.printKSPPaths(kspOutfile, paths)
         print('KSP paths are in "%s"' %(kspOutfile))
