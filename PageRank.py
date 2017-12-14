@@ -19,12 +19,9 @@ T. M. Murali: tmmurali@cs.vt.edu
 '''
 
 # Imports
-import heapq
 import networkx as nx
 import sys
 from optparse import OptionParser, OptionGroup
-from collections import defaultdict
-from math import isinf
 
 '''
 Run the PageRank algorithm.
