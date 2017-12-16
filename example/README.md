@@ -29,13 +29,13 @@ To run PathLinker on this network, use the command:
 
     python ../run.py sample-in-net.txt sample-in-nodetypes.txt
 
-This will create a file, `out_k_100-ranked-edges.txt`, which ranks the
+This will create a file, `outk-100-ranked-edges.txt`, which ranks the
 interactions (edges) as described above. Some edges are not listed in
 this file; PathLinker implicitly ranks these unlisted interactions as
 equal, below the explicitly ranked edges.
 
 Adding the option `--write-paths` will generate a second output file
-`out_k_100-paths.txt`, which lists the paths used by PathLinker to
+`outk-100-paths.txt`, which lists the paths used by PathLinker to
 determine the ranking. Additional options control the parameters for
 PathLinker, as described in the reference materials.
 
