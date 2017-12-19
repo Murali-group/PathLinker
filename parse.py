@@ -1,3 +1,14 @@
+def write_network_file(G, output_file_handle):
+    output_file_handle.write("# Tail Node\tHead Node\tWeight\n")
+    for edge in G.edges(data=True): 
+        line = \
+            str(edge[0]) + "\t" + 
+            str(edge[1]) + "\t" + 
+            str(edge[2]['weight'] + "\n")
+
+        output_file_handle.write(line)
+
+
 def get_source_set(nodes_file_handle):
     sources = set()
     for line in nodes_file_handle:
