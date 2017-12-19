@@ -1,3 +1,42 @@
+def get_source_set(nodes_file_handle):
+    sources = set()
+    for line in nodes_file_handle:
+        if not is_comment_line(line): 
+            tokens = tokenize(line)
+            if tokens[1] in ['source,' 'receptor']:
+                sources.add(tokens[0])
+    return sources
+
+
+def get_target_set(nodes_file_handle):
+    targets = set()
+    for line in nodes_file_handle:
+        if not is_comment_line(line): 
+            tokens = tokenize(line)
+            if tokens[1] in ['target', 'tr', 'tf']:
+                targets.add(tokens[0])
+    return targets
+
+
+def get_node_set(network_file_handle):
+    nodes = set()
+    for line in nodes_file_handle:
+        if not is_comment_line(line): 
+            tokens = tokenize(line)
+            nodes.add(tokens[0])
+            nodes.add(tokens[1])
+    return nodes
+
+
+def get_edge_set(network_file_handle):
+    edges = set()
+    for line in edges_file_handle:
+        if not is_comment_line(line): 
+            edge = get_edge(tokens)
+            edges.add(edge)
+    return edges
+
+
 def get_ranked_nodes(ranked_edges):
     """
     Given: a list of sets of edges, where all nodes in the set have
