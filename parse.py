@@ -41,7 +41,7 @@ def get_node_set(network_file_handle):
 
 def get_edge_set(network_file_handle):
     edges = set()
-    for line in edges_file_handle:
+    for line in network_file_handle:
         if not is_comment_line(line): 
             edge = get_edge(tokens)
             edges.add(edge)
