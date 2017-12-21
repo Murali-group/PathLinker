@@ -31,7 +31,7 @@ def get_target_set(nodes_file_handle):
 
 def get_node_set(network_file_handle):
     nodes = set()
-    for line in nodes_file_handle:
+    for line in network_file_handle:
         if not is_comment_line(line): 
             tokens = tokenize(line)
             nodes.add(tokens[0])
