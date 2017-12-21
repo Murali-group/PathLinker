@@ -14,7 +14,7 @@ def get_source_set(nodes_file_handle):
     for line in nodes_file_handle:
         if not is_comment_line(line): 
             tokens = tokenize(line)
-            if tokens[1] in ['source,' 'receptor']:
+            if tokens[1] in ['source', 'receptor']:
                 sources.add(tokens[0])
     return sources
 
