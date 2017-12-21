@@ -43,6 +43,7 @@ def get_edge_set(network_file_handle):
     edges = set()
     for line in network_file_handle:
         if not is_comment_line(line): 
+            tokens = tokenize(line)
             edge = get_edge(tokens)
             edges.add(edge)
     return edges
