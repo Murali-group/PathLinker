@@ -4,7 +4,7 @@ def write_network_file(G, output_file_handle):
         line = \
             str(edge[0]) + "\t" + \
             str(edge[1]) + "\t" + \
-            str(edge[2]['weight'] + "\n")
+            str(edge[2]['weight']) + "\n"
 
         output_file_handle.write(line)
 
