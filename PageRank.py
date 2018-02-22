@@ -163,8 +163,11 @@ def pagerank(net, weights={}, q=0.5, eps=0.01, maxIters=500, verbose=False, weig
 
     return currVisitProb
 
-# Write the resulting weights from a pagerank to file for later use.
+
 def writePageRankWeights(final, filename=None):
+    '''
+    Write the resulting weights from a pagerank run to file for later use
+    '''
     ostream = sys.stdout
     if filename!=None:
         ostream = open(filename, 'w')
@@ -174,8 +177,10 @@ def writePageRankWeights(final, filename=None):
     if ostream!=sys.stdout:
         ostream.close()
 
-# Main method, so this can be used on the command line
 def main(args):
+    '''
+    Main method, so this can be used on the command line
+    '''
 
     usage = '''
 PageRank.py [options] NETWORK
