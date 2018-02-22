@@ -217,6 +217,11 @@ REQUIRED arguments:
 
     ## Use the results of KSP to rank edges
 
+    # Un-does the logarithmic transformation on the path lengths to
+    # make the path length in terms of the original edge weights
+    if not opts.no_log_transform:
+        paths = pl.undoLogTransformPathLengths(paths)
+
     # Prepare the k shortest paths for output to flat files
     pathgraph = nx.DiGraph()
     for k,path in enumerate(paths, 1):
@@ -239,7 +244,10 @@ REQUIRED arguments:
             # This is a new edge. Add it to the list and note which k it
             # appeared in.
             else:
-                edges.append( (t,h,{'ksp_id':k, 'ksp_weight':net.edge[t][h]['ksp_weight']}) )
+                edges.append( (t,h,{
+                    'ksp_id':k, 
+                    'ksp_weight':net.edge[t][h]['ksp_weight'],
+                    'path_cost': path[-1][1]}) )
 
         # Add all new, good edges from this path to the network
         pathgraph.add_edges_from(edges)
@@ -265,11 +273,6 @@ REQUIRED arguments:
     # requested.
     if(opts.write_paths):
         kspOutfile = '%sk-%d-paths.txt' %(opts.output, opts.k_param)
-
-        # Un-does the logarithmic transformation on the path lengths to
-        # make the path length in terms of the original edge weights
-        if not opts.no_log_transform:
-            paths = pl.undoLogTransformPathLengths(paths)
 
         pl.printKSPPaths(kspOutfile, paths)
         print('KSP paths are in "%s"' %(kspOutfile))

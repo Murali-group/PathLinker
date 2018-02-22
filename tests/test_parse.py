@@ -10,9 +10,9 @@ class TestParse(unittest.TestCase):
     def setUp(self):
         self.edges_contents = StringIO(
             "#tail\thead\tKSP Index\n"
-            "A\tB\t1\n"
-            "A\tE\t2\n"
-            "E\tF\t2")
+            "A\tB\t1\t.75\n"
+            "A\tE\t2\t.5\n"
+            "E\tF\t2\t.5")
 
         self.paths_contents = StringIO(
             "#KSP\tpath_length\tpath\n"
@@ -23,7 +23,8 @@ class TestParse(unittest.TestCase):
     def test_parse_ranked_edges(self):
         ranked_edges = parse.parse_ranked_edges(self.edges_contents)
 
-        expected = [set([("A", "B")]), set([("A", "E"), ("E", "F")])]
+        expected = [set([(("A", "B"), .75)]), 
+                    set([(("A", "E"), .5), (("E", "F"), .5)])]
 
         self.assertEqual(len(expected), len(ranked_edges))
 
@@ -43,7 +44,8 @@ class TestParse(unittest.TestCase):
 
 
     def test_get_ranked_nodes(self):
-        ranked_edges = [set([("A", "B")]), set([("A", "E"), ("E", "F")])]
+        ranked_edges = [set([(("A", "B"), .75)]), 
+                        set([(("A", "E"), .5), (("E", "F"), .5)])]
         ranked_nodes = parse.get_ranked_nodes(ranked_edges)
 
         expected = [set(["A", "B"]), set(["E", "F"])]

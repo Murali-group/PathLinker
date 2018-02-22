@@ -63,7 +63,7 @@ def get_ranked_nodes(ranked_edges):
 
     for edge_set in ranked_edges:
         for edge in edge_set:
-            for node in edge:
+            for node in edge[0]:
                 if node not in overall_set:
                     overall_set.add(node)
                     current_set.add(node)
@@ -84,13 +84,14 @@ def parse_ranked_edges(ranked_edges_handle):
             tokens = tokenize(line)
             edge = get_edge(tokens)
             rank = int(get_edge_rank(tokens))
+            weight = float(get_edge_weight(tokens))
 
             if rank == prev_rank:
-                current_set.add(edge)
+                current_set.add((edge, weight))
             else:
                 ranked_edges.append(current_set)
                 current_set = set()
-                current_set.add(edge)
+                current_set.add((edge, weight))
                 prev_rank = rank
 
     ranked_edges.append(current_set)
@@ -127,6 +128,10 @@ def get_edge(tokens):
 
 def get_edge_rank(tokens):
     return tokens[2]
+
+
+def get_edge_weight(tokens):    
+    return tokens[3]
 
 
 def get_path(tokens):

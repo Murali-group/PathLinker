@@ -208,14 +208,15 @@ def printKSPGraph(f, graph):
     """
 
     outf = open(f, 'w')
-    outf.write('#tail\thead\tKSP index\n')
+    outf.write('#tail\thead\tKSP index\tpath cost\n')
     edges = graph.edges(data=True)
 
     # Print in increasing order of KSP identifier.
     for e in sorted(edges, key=lambda x: x[2]['ksp_id']):
         t, h, attr_dict = e
         ksp = attr_dict['ksp_id']
-        outf.write('%s\t%s\t%d\n' %(t, h, ksp))
+        cost = attr_dict['path_cost']
+        outf.write('%s\t%s\t%d\t%0.5e\n' %(t, h, ksp, cost))
     outf.close()
     return
 
