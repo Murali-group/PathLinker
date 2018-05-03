@@ -14,7 +14,7 @@ def get_source_set(nodes_file_handle):
     for line in nodes_file_handle:
         if not is_comment_line(line): 
             tokens = tokenize(line)
-            if tokens[1] in ['source', 'receptor']:
+            if tokens[1].strip() in ['source', 'receptor']:
                 sources.add(tokens[0])
     return sources
 
@@ -24,7 +24,7 @@ def get_target_set(nodes_file_handle):
     for line in nodes_file_handle:
         if not is_comment_line(line): 
             tokens = tokenize(line)
-            if tokens[1] in ['target', 'tr', 'tf']:
+            if tokens[1].strip() in ['target', 'tr', 'tf']:
                 targets.add(tokens[0])
     return targets
 
