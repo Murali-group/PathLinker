@@ -44,7 +44,7 @@ See the publications referenced below for a formal description of the
 method.
 
 ### What's included
-  * **PathLinker.py** An end-to-end implementation of the PathLinker
+  * **run.py** An end-to-end implementation of the PathLinker
   algorithm. Given a network, a set or receptors, a set of
   transcription factors, and a value of *k*, PathLinker outputs a ranked list of edges composing the *k* highest scoring paths connecting any receptor to any transcription factor.
   * **PageRank.py** An implementation of the PageRank algorithm. This algorithm can be used as
