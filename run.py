@@ -10,7 +10,7 @@ from PageRank import pagerank, writePageRankWeights
 
 def main(args):
     usage = '''
-PathLinker.py [options] NETWORK NODE_TYPES
+run.py [options] NETWORK NODE_TYPES
 REQUIRED arguments:
     NETWORK - A tab-delimited file with one directed interaction per
         line. Each line should have at least 2 columns: tail, head. Edges
