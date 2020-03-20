@@ -44,11 +44,9 @@ See the publications referenced below for a formal description of the
 method.
 
 ### What's included
-  * **run.py** An end-to-end implementation of the PathLinker algorithm. Given a 
-  network, a set of receptors, and a set of transcription factors, run outputs a 
-  ranked list of all the edges encountered in the *k* highest scoring paths 
-  connecting any receptor to any transcription factor, as well as a list of all 
-  the paths found by the ksp algorithm if requested.
+  * **run.py** An end-to-end implementation of the PathLinker
+  algorithm. Given a network, a set or receptors, and a set of
+  transcription factors, run outputs a ranked list of edges encountered in the *k* highest scoring paths connecting any receptor to any transcription factor.
   * **PageRank.py** An implementation of the PageRank algorithm. This algorithm can be used as
   a component of PathLinker, but it can also be run as a standalone tool.
   Given a weighted, directed network, PageRank uses the power method to compute the
