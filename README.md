@@ -44,9 +44,11 @@ See the publications referenced below for a formal description of the
 method.
 
 ### What's included
-  * **PathLinker.py** An end-to-end implementation of the PathLinker
-  algorithm. Given a network, a set or receptors, a set of
-  transcription factors, and a value of *k*, PathLinker outputs a ranked list of edges composing the *k* highest scoring paths connecting any receptor to any transcription factor.
+  * **run.py** An end-to-end implementation of the PathLinker algorithm. Given a 
+  network, a set of receptors, and a set of transcription factors, run outputs a 
+  ranked list of all the edges encountered in the *k* highest scoring paths 
+  connecting any receptor to any transcription factor, as well as a list of all 
+  the paths found by the ksp algorithm if requested.
   * **PageRank.py** An implementation of the PageRank algorithm. This algorithm can be used as
   a component of PathLinker, but it can also be run as a standalone tool.
   Given a weighted, directed network, PageRank uses the power method to compute the
@@ -58,6 +60,10 @@ method.
   computes the *k* shortest simple paths betwen a source and target
   node. Here a path is *simple* if there are no repeated nodes in the
   path.
+  * **PathLinker.py** Given a network, a set of receptors, a set of transcription 
+  factors, and a value of *k*, PathLinker modifies the structure of the graph to 
+  calculate and output the *k* high-scoring paths from any receptor protein to any 
+  transcriptional regulator.
 
 Run any of the programs with the --help option for full documentation.
 The /example directory contains a sample usage of these programs.
