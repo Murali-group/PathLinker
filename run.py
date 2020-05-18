@@ -43,7 +43,7 @@ REQUIRED arguments:
         help='Run PathLinker on only the largest weakly connected component of the graph. May provide performance speedup.')
         
     parser.add_option('', '--edge-penalty', type='float', default=1.0,\
-        help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(this factor). (default=1.0)')
+        help='Factor by which to divide every edge weight. The effect of this option is to penalize the score of every path by a factor equal to (the number of edges in the path)^(weight). (default=1.0)')
 
     # Random Walk Group
     group = OptionGroup(parser, 'Random Walk Options')
@@ -184,12 +184,10 @@ REQUIRED arguments:
     
     ## Prepare the network to run KSP
 
-    # Remove improper edges from the sources and targets. This portion
-    # must be performed before the log transformation, so that the
-    # renormalization within accounts for the probability lost to the
-    # removed edges.  These transformations are executed by default;
-    # to prevent them, use the opts.allow_mult_sources or opts.allow_mult_targets
-    # arguments.
+    # Remove improper edges from the sources and targets. If the user runs PageRank 
+    # first, then this step will cause the total edge flux in the graph to be less than one.  
+    # These transformations are executed by default to prevent them, use the 
+    # opts.allow_mult_sources or opts.allow_mult_target arguments.
     if not opts.allow_mult_sources:
         pl.modifyGraphForKSP_removeEdgesToSources(net, sources)
     if not opts.allow_mult_targets:
