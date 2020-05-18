@@ -105,14 +105,7 @@ def applyEdgePenalty(net, weight):
     """
     Applies a user-specified edge penalty to each edge. This weight
     penalizes the score of every path by a factor equal to
-    (the number of edges in the path)^(this factor).
-
-    This was previously done in the logTransformEdgeWeights method
-    with a parameter weight=(sum of all edge weights). In the 
-    "standard" PathLinker case, this was necessary to account for the
-    probability that is lost when edges are removed in 
-    modifyGraphForKSP_removeEdges(), along with the probability lost
-    to zero degree nodes in the edge flux calculation.
+    (the number of edges in the path)^(weight).
 
     :param net: NetworkX graph
     :param weight: user-specified edge penalty
@@ -132,9 +125,6 @@ def logTransformEdgeWeights(net):
     Apply a negative logarithmic transformation to edge weights,
     converting multiplicative values (where higher is better) to
     additive costs (where lower is better).
-
-    Before the transformation, weights are normalized to sum to one,
-    supporting an interpretation as probabilities.
 
     If the weights in the input graph correspond to probabilities,
     shortest paths in the output graph are maximum-probability paths
