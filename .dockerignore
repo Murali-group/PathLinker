@@ -1,0 +1,8 @@
+# Ignore everything in the repository
+*
+# except these files that should be part of the Docker build context
+!/docker/*
+!/tests/*
+!*.py
+!LICENSE.md
+!requirements.txt
