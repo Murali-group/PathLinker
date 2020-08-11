@@ -45,6 +45,14 @@ To run in Git for Windows and mount the example data inside the container:
 
 `winpty docker run -v /$(pwd)/example:/home/PathLinker/example -it pathlinker/pathlinker-v3 bash`
 
-then inside the container test PathLinker on the example data:
+then inside the container in the `/home/Pathlinker/example` directory call:
+
+`python ../run.py sample-in-net.txt sample-in-nodetypes.txt`
+
+the output files will be linked to the host machine in the example subdirectory. 
+
+Without mounting the example data, to run Pathlinker inside the container (on the same example data copied by default):
 
 `python run.py --PageRank example/sample-in-net-noweights.txt example/sample-in-nodetypes.txt`
+
+from the `/home/Pathlinker` directory
