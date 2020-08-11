@@ -11,6 +11,7 @@ RUN  apt-get update \
 RUN apt update \
     && apt install -y git
 
+# allow root access to image resources 
 USER root
 
 
@@ -36,6 +37,5 @@ COPY docker/tests/minimal_env.yml tests/
 RUN conda env create -f tests/minimal_env.yml && \
     echo "conda activate path-linker" >> ~/.bashrc 
 
-USER root
 
 WORKDIR /home/PathLinker
