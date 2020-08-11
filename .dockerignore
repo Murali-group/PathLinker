@@ -4,5 +4,4 @@
 !/docker/*
 !/tests/*
 !*.py
-!LICENSE.md
-!requirements.txt
+!*.md
