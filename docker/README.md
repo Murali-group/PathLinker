@@ -51,7 +51,7 @@ then inside the container in the `/home/Pathlinker/example` directory call:
 
 the output files will be linked to the host machine in the example subdirectory. 
 
-Without mounting the example data, to run Pathlinker inside the container (on the same example data copied by default):
+To run Pathlinker inside the container:
 
 `python run.py --PageRank example/sample-in-net-noweights.txt example/sample-in-nodetypes.txt`
 
