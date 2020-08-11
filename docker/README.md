@@ -25,3 +25,14 @@ To run the image:
 Once the image is running, move into the `/PathLinkerHome/Pathlinker-project/example` diretory. Then call
 
 `bash pl-example.sh` to run pathlinker on the example data.
+
+## DOCKER_BUILD_V3
+- use `Copy` statements to make container more dynamic
+
+To build image from Pathlinker repository __root__ directory:
+
+`docker build -t pathlinker/pathlinker-v3 -f docker/DOCKER_BUILD_V3/Dockerfile .`
+
+To run the image:
+
+`docker run -it pathlinker/pathlinker-v3 bash`
