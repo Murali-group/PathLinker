@@ -8,7 +8,7 @@ To build image from PathLinker repository __root__ directory:
 
 To run the image interactively:
 
-`docker run -it pathlinker/pathlinker-v3 bash`
+`docker run -it pathlinker/pathlinker bash`
 
 To run in Git for Windows:
 
