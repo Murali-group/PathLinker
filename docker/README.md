@@ -12,11 +12,11 @@ To run the image interactively:
 
 To run in Git for Windows:
 
-`winpty docker run -it pathlinker/pathlinker-v3 bash`
+`winpty docker run -it pathlinker/pathlinker bash`
 
 To run in Git for Windows and mount the example data inside the container:
 
-`winpty docker run -v /$(pwd)/example:/home/PathLinker/example -it pathlinker/pathlinker-v3 bash`
+`winpty docker run -v /$(pwd)/example:/home/PathLinker/example -it pathlinker/pathlinker bash`
 
 then inside the container in the `/home/Pathlinker/example` directory call:
 
