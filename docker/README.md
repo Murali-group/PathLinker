@@ -1,7 +1,5 @@
 # Dockerized PathLinker
 
-- Use `COPY` statements to make container more dynamic
-
 To build image from PathLinker repository __root__ directory:
 
 `docker build -t pathlinker/pathlinker -f docker/Dockerfile .`
