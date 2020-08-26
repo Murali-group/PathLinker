@@ -7,7 +7,7 @@
 
 ## Requirements
 - Docker software
-- Mac, linux, Windows machine 
+- Mac, linux, or Windows machine 
 
 ## Build (Mac/Linux/Windows)
 
@@ -21,7 +21,7 @@ To run the image interactively (with no linked data):
 
 ## Run (Mac/Linux)
 
-To mount the example data inside the container (linking the example data):
+To mount the example data inside the container:
 
 `docker run -v /$(pwd)/example:/home/PathLinker/example -it pathlinker/pathlinker bash`
 
