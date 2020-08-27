@@ -48,7 +48,7 @@ To run container in Git for Windows:
 
 `winpty docker run -it pathlinker/pathlinker bash`
 
-**Note the** `winpty` **cammand**
+**Note the** `winpty` **command**
 
 To run in Git for Windows and mount the example data inside the container:
 
@@ -57,7 +57,6 @@ To run in Git for Windows and mount the example data inside the container:
 then inside the container in the `/home/Pathlinker/example` directory call:
 
 `python ../run.py sample-in-net.txt sample-in-nodetypes.txt`
-
 
 
 
