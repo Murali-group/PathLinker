@@ -1,9 +1,9 @@
 # Dockerized PathLinker
 
 ## Steps
-- Build Pathlinker docker container
-- Run Pathlinker docker image interactivley and mount example data to container
-- Run Pathlinker software on example data within the container
+- Build PathLinker docker container
+- Run PathLinker docker image interactivley and mount example data to container
+- Run PathLinker software on example data within the container
 
 ## Requirements
 - Docker software
@@ -31,7 +31,7 @@ then inside the container in the `/home/Pathlinker/example` directory call:
 
 the output files will be linked to the host machine in the example subdirectory. 
 
-To run Pathlinker with `PageRank` inside the container:
+To run PathLinker with `PageRank` inside the container:
 
 `python run.py --PageRank example/sample-in-net-noweights.txt example/sample-in-nodetypes.txt`
 
