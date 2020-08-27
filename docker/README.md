@@ -48,8 +48,6 @@ To run container in Git for Windows:
 
 `winpty docker run -it pathlinker/pathlinker bash`
 
-**Note the** `winpty` **command**
-
 To run in Git for Windows and mount the example data inside the container:
 
 `winpty docker run -v /$(pwd)/example:/home/PathLinker/example -it pathlinker/pathlinker bash`
